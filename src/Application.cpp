@@ -17,6 +17,7 @@ void Application::Init()
   baseDeps.events = m_eventHandler.GetQueue();
   
   m_layerStack.Init(&baseDeps);
+  m_eventHandler.Update();
 }
 
 void Application::Run()
