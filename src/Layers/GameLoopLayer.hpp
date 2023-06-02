@@ -7,12 +7,18 @@
 
 namespace Tolik
 {
+class BaseDeps;
+
 class GameLoopLayer : Layer
 {
 public:
-  GameLoopLayer(std::queue<Event*> *eventQueue, Debug *debug);
+  GameLoopLayer(BaseDeps *newBaseDeps);
+  virtual ~GameLoopLayer();
 
   virtual void Update() override {}
+
+private:
+  BaseDeps *m_baseDeps;
 };
 }
 

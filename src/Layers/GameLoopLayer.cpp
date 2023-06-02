@@ -3,10 +3,16 @@
 #include "Header.hpp"
 
 #include "Layer.hpp"
+#include "DependencyInterfaces.hpp"
 
 namespace Tolik
 {
-GameLoopLayer::GameLoopLayer(std::queue<Event*> *eventQueue, Debug *debug)
-  : Layer(eventQueue, debug)
-{}
+GameLoopLayer::GameLoopLayer(BaseDeps *newBaseDeps)
+{
+  m_baseDeps = newBaseDeps;
+}
+GameLoopLayer::~GameLoopLayer()
+{
+  
+}
 }

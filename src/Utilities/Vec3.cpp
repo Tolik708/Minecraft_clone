@@ -2,36 +2,17 @@
 
 namespace Tolik
 {
-vec3::vec3(float x, float y, float z)
-{
-  e[0] = x;
-  e[1] = y;
-  e[2] = z;
-}
-vec3::vec3(float xyz)
-{
-  e[0] = xyz;
-  e[1] = xyz;
-  e[2] = xyz;
-}
-vec3::vec3()
-{
-  e[0] = 0;
-  e[1] = 0;
-  e[2] = 0;
-}
-
 vec3 vec3::Normalized() const 
 {
   float inverseMagnitude = 1 / Magnitude();
-  return vec3(e[0] * inverseMagnitude, e[1] * inverseMagnitude, e[2] * inverseMagnitude);
+  return vec3(x * inverseMagnitude, y * inverseMagnitude, z * inverseMagnitude);
 }
 void vec3::Normalize()
 {
   float inverseMagnitude = 1 / Magnitude();
-  e[0] *= inverseMagnitude;
-  e[1] *= inverseMagnitude;
-  e[2] *= inverseMagnitude;
+  x *= inverseMagnitude;
+  y *= inverseMagnitude;
+  z *= inverseMagnitude;
 }
 void vec3::ClampMagnitude(float maxMagnitude, float minMagnitude)
 {
@@ -39,16 +20,16 @@ void vec3::ClampMagnitude(float maxMagnitude, float minMagnitude)
   if (sqrMagnitude > maxMagnitude * maxMagnitude)
   {
     Normalize();
-    e[0] *= maxMagnitude;
-    e[1] *= maxMagnitude;
-    e[2] *= maxMagnitude;
+    x *= maxMagnitude;
+    y *= maxMagnitude;
+    z *= maxMagnitude;
   }
   else if (sqrMagnitude < minMagnitude * minMagnitude)
   {
     Normalize();
-    e[0] *= minMagnitude;
-    e[1] *= minMagnitude;
-    e[2] *= minMagnitude;
+    x *= minMagnitude;
+    y *= minMagnitude;
+    z *= minMagnitude;
   }
 }
 

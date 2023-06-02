@@ -4,21 +4,31 @@
 
 namespace Tolik
 {
-const std::unordered_map<LogType, std::string> Debug::LogTypeName = 
+const std::unordered_map<LogType, std::string> Debug::LogTypeNameMap = 
 {
   { LogType::Debug,   "DEBUG" },
   { LogType::Info,    "INFO" },
   { LogType::Warning, "WARNING" },
   { LogType::Error,   "ERROR" }
 };
-const std::unordered_map<LogType, uint32_t> Debug::LogTypeColor = 
+const std::unordered_map<LogType, uint32_t> Debug::LogTypeColorMap = 
 {
   { LogType::Debug,   0 },
   { LogType::Info,    8 },
   { LogType::Warning, 14 },
   { LogType::Error,   12 }
 };
-const std::string Debug::numbers = "0123456789";
+const std::unordered_map<GLenum, std::string> Debug::GLErrorsNamesMap =
+{
+	{ GL_NO_ERROR,                      "GL_NO_ERROR" },
+	{ GL_INVALID_ENUM,                  "GL_INVALID_ENUM" },
+	{ GL_INVALID_VALUE,                 "GL_INVALID_VALUE" },
+	{ GL_INVALID_OPERATION,             "GL_INVALID_OPERATION"} ,
+	{ GL_INVALID_FRAMEBUFFER_OPERATION, "GL_INVALID_FRAMEBUFFER_OPERATION" },
+	{ GL_OUT_OF_MEMORY,                 "GL_OUT_OF_MEMORY" },
+	{ GL_STACK_UNDERFLOW,               "GL_STACK_UNDERFLOW" },
+	{ GL_STACK_OVERFLOW,                "GL_STACK_OVERFLOW" }
+};
 
 Debug::Debug() : m_paternIdentifier
 ({

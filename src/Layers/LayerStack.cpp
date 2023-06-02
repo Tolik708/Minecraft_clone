@@ -8,10 +8,10 @@
 
 namespace Tolik
 {
-void LayerStack::Init(Debug *debug, std::queue<Event*> *eventQueue)
+void LayerStack::Init(BaseDeps *baseDeps)
 {
-  layers.push_back(reinterpret_cast<Layer*>(new GameLoopLayer(eventQueue, debug)));
-  layers.push_back(reinterpret_cast<Layer*>(new RenderLayer(eventQueue, debug)));
+  layers.push_back(reinterpret_cast<Layer*>(new GameLoopLayer(baseDeps)));
+  layers.push_back(reinterpret_cast<Layer*>(new RenderLayer(baseDeps)));
 }
 
 void LayerStack::Update()

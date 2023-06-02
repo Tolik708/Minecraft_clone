@@ -12,7 +12,7 @@ class Debug;
 class EventHandler
 {
 public:
-  void Init(Application *application, Debug *debug);
+  void Init(std::function<void(Event*)> newOnEventFunction, Debug *debug);
   void Update();
 
   inline std::queue<Event*> *GetQueue() { return &m_queue; }
@@ -22,7 +22,7 @@ private:
   void GetSDLEvents();
 
   std::queue<Event*> m_queue;
-  Application *m_application;
+  std::function<void(Event*)> m_onEventFunction;
   Debug *m_debug;
 };
 }

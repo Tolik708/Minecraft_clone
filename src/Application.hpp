@@ -25,6 +25,7 @@ private:
   LayerStack m_layerStack;
   EventHandler m_eventHandler;
   Debug m_debug;
+  
 };
 }
 

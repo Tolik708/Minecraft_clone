@@ -3,14 +3,13 @@
 #include "Header.hpp"
 
 #include "Event.hpp"
-#include "Application.hpp"
 #include "Debug.hpp"
 
 namespace Tolik
 {
-void EventHandler::Init(Application *application, Debug *debug)
+void EventHandler::Init(std::function<void(Event*)> newOnEventFunction, Debug *debug)
 {
-  m_application = application;
+  m_onEventFunction = newOnEventFunction;
   m_debug = debug;
 }
 
@@ -24,7 +23,7 @@ void EventHandler::Dispatch()
   while(!m_queue.empty())
   {
     Event* event = m_queue.front();
-    m_application->OnEvent(event);
+    m_onEventFunction(event);
     m_queue.pop();
   }
 }

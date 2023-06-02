@@ -2,48 +2,32 @@
 
 namespace Tolik
 {
-vec2::vec2(float x, float y)
-{
-  e[0] = x;
-  e[1] = y;
-}
-vec2::vec2(float xy)
-{
-  e[0] = xy;
-  e[1] = xy;
-}
-vec2::vec2()
-{
-  e[0] = 0;
-  e[1] = 0;
-}
-
 void vec2::ClampMagnitude(float maxMagnitude, float minMagnitude)
 {
   float sqrMagnitude = SqrMagnitude();
   if (sqrMagnitude > maxMagnitude * maxMagnitude)
   {
     Normalize();
-    e[0] *= maxMagnitude;
-    e[1] *= maxMagnitude;
+    x *= maxMagnitude;
+    y *= maxMagnitude;
   }
   else if (sqrMagnitude < minMagnitude * minMagnitude)
   {
     Normalize();
-    e[0] *= minMagnitude;
-    e[1] *= minMagnitude;
+    x *= minMagnitude;
+    y *= minMagnitude;
   }
 }
 vec2 vec2::Normalized() const
 {
   float inverseMagnitude = 1 / Magnitude();
-  return vec2(e[0] * inverseMagnitude, e[1] * inverseMagnitude);
+  return vec2(x * inverseMagnitude, y * inverseMagnitude);
 }
 void vec2::Normalize()
 {
   float inverseMagnitude = 1 / Magnitude();
-  e[0] *= inverseMagnitude;
-  e[1] *= inverseMagnitude;
+  x *= inverseMagnitude;
+  y *= inverseMagnitude;
 }
 
 vec2 vec2::ClampMagnitude(const vec2 &vector, float maxMagnitude, float minMagnitude)

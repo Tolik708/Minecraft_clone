@@ -8,8 +8,7 @@
 
 namespace Tolik
 {
-//max ammount of types is 65535 because we can use only first 16 bits
-enum class EventType : uint32_t
+enum class EventType : uint16_t
 {
   None,
   Quit,
@@ -17,24 +16,45 @@ enum class EventType : uint32_t
   MouseMove, MouseLeft, MouseMiddle, MouseRigth, MouseScroll,
   KeyDown, KeyUp
 };
-//max ammount of groups is 16. They start at 17-th bit
-enum class EventGroup : uint32_t
+enum class EventGroup : uint16_t
 {
-  Window = BIT(16),
-  Input = BIT(17) | BIT(18),
-  MouseInput = BIT(17),
-  KeyInput = BIT(18),
+  None,
+  Window = BIT(0),
+  Input = BIT(1) | BIT(2),
+  MouseInput = BIT(1),
+  KeyInput = BIT(2),
 };
+
+inline EventType operator&(EventType a, EventType b) { return static_cast<EventType>(static_cast<uint16_t>(a) & static_cast<uint16_t>(b)); }
+inline EventType operator|(EventType a, EventType b) { return static_cast<EventType>(static_cast<uint16_t>(a) | static_cast<uint16_t>(b)); }
+inline EventType operator^(EventType a, EventType b) { return static_cast<EventType>(static_cast<uint16_t>(a) ^ static_cast<uint16_t>(b)); }
+inline EventType operator&(EventType a, EventGroup b) { return static_cast<EventType>(static_cast<uint16_t>(a) & static_cast<uint16_t>(b)); }
+inline EventType operator|(EventType a, EventGroup b) { return static_cast<EventType>(static_cast<uint16_t>(a) | static_cast<uint16_t>(b)); }
+inline EventType operator^(EventType a, EventGroup b) { return static_cast<EventType>(static_cast<uint16_t>(a) ^ static_cast<uint16_t>(b)); }
+inline EventGroup operator&(EventGroup a, EventType b) { return static_cast<EventGroup>(static_cast<uint16_t>(a) & static_cast<uint16_t>(b)); }
+inline EventGroup operator|(EventGroup a, EventType b) { return static_cast<EventGroup>(static_cast<uint16_t>(a) | static_cast<uint16_t>(b)); }
+inline EventGroup operator^(EventGroup a, EventType b) { return static_cast<EventGroup>(static_cast<uint16_t>(a) ^ static_cast<uint16_t>(b)); }
+inline EventGroup operator&(EventGroup a, EventGroup b) { return static_cast<EventGroup>(static_cast<uint16_t>(a) & static_cast<uint16_t>(b)); }
+inline EventGroup operator|(EventGroup a, EventGroup b) { return static_cast<EventGroup>(static_cast<uint16_t>(a) | static_cast<uint16_t>(b)); }
+inline EventGroup operator^(EventGroup a, EventGroup b) { return static_cast<EventGroup>(static_cast<uint16_t>(a) ^ static_cast<uint16_t>(b)); }
 
 class Event
 {
 public:
-  virtual uint32_t GetType() = 0;
+  template<typename T> static bool Any(T event) { return static_cast<uint16_t>(event) != 0; }
+
+  inline EventType GetType() { return type; }
+  inline EventGroup GetGroup() { return group; }
   inline bool GetHandlet() { return handlet; }
   inline void SetAsHandlet() { handlet = true; }
 
   virtual std::string GetName() { return "None"; }
+protected:
+  Event(EventType newType, EventGroup newGroup) : type(newType), group(newGroup) {}
+
 private:
+  const EventType type;
+  const EventGroup group;
   bool handlet;
 };
 
@@ -42,11 +62,9 @@ private:
 class WindowResizeEvent : public Event
 {
 public:
-  WindowResizeEvent(vec2 newWindowSize) { m_newWindowSize = newWindowSize; }
+  WindowResizeEvent(vec2 newWindowSize) : Event(EventType::WindowResize, EventGroup::Window) { m_newWindowSize = newWindowSize; }
 
-  virtual uint32_t GetType() override { return static_cast<uint32_t>(EventGroup::Window) | static_cast<uint32_t>(EventType::WindowResize); }
   inline vec2 GetNewWindowSize() { return m_newWindowSize; }
-  inline void SetNewWindowSize(vec2 newWindowSize) { m_newWindowSize = newWindowSize; }
 
   virtual std::string GetName() override { return "Window Resize"; }
 private:
@@ -56,7 +74,9 @@ private:
 
 class QuitEvent : public Event 
 {
-  virtual uint32_t GetType() override { return static_cast<uint32_t>(EventType::Quit); }
+public:
+  QuitEvent() : Event(EventType::Quit, EventGroup::Window) {}
+
   virtual std::string GetName() override { return "Quit Event"; }
 };
 }

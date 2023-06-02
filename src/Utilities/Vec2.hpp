@@ -7,34 +7,38 @@ namespace Tolik
 {
 struct vec2
 {
-  vec2(float x, float y);
-  vec2(float xy);
-  vec2();
+  vec2(float newX, float newY) { x = newX; y = newY; }
+  vec2(float newXY) { x = newXY; y = newXY; }
+  vec2() {}
 
-  float e[2];
-  inline float x() const { return e[0]; }
-  inline float y() const { return e[1]; }
-  inline float& x() { return e[0]; }
-  inline float& y() { return e[1]; }
+  union
+  {
+    struct
+    {
+      float x;
+      float y;
+    };
+    float padding[2] = { 0 };
+  };
 
-  inline float SqrMagnitude() const { return (e[0] * e[0]) + (e[1] * e[1]); }
+  inline float SqrMagnitude() const { return (x * x) + (y * y); }
   inline float Magnitude() const { return sqrt(SqrMagnitude()); }
   void ClampMagnitude(float minMagnitude, float maxMagnitude);
-  inline void Round() { e[0] = round(e[0]); e[1] = round(e[1]); }
+  inline void Round() { x = round(x); y = round(y); }
   vec2 Normalized() const;
   void Normalize();
 
-  inline float& operator[](int i) { return e[i]; }
-  inline float operator[](int i) const { return e[i]; }
-  inline vec2 operator+(const vec2 &vector) const { return vec2(e[0] + vector[0], e[1] + vector[1]); }
-  inline vec2 operator-(const vec2 &vector) const { return vec2(e[0] - vector[0], e[1] - vector[1]); }
-  inline vec2 operator*(const vec2 &vector) const { return vec2(e[0] * vector[0], e[1] * vector[1]); }
-  inline vec2 operator/(const vec2 &vector) const { return vec2(e[0] / vector[0], e[1] / vector[1]); }
-  inline vec2 operator+(float num) const { return vec2(e[0] + num, e[1] + num); }
-  inline vec2 operator-(float num) const { return vec2(e[0] - num, e[1] - num); }
-  inline vec2 operator*(float num) const { return vec2(e[0] * num, e[1] * num); }
-  inline vec2 operator/(float num) const { return vec2(e[0] / num, e[1] / num); }
-  inline vec2 operator-() const { return vec2(-e[0], -e[1]); }
+  inline float& operator[](int i) { return padding[i]; }
+  inline float operator[](int i) const { return padding[i]; }
+  inline vec2 operator+(const vec2 &vector) const { return vec2(x + vector[0], y + vector[1]); }
+  inline vec2 operator-(const vec2 &vector) const { return vec2(x - vector[0], y - vector[1]); }
+  inline vec2 operator*(const vec2 &vector) const { return vec2(x * vector[0], y * vector[1]); }
+  inline vec2 operator/(const vec2 &vector) const { return vec2(x / vector[0], y / vector[1]); }
+  inline vec2 operator+(float num) const { return vec2(x + num, y + num); }
+  inline vec2 operator-(float num) const { return vec2(x - num, y - num); }
+  inline vec2 operator*(float num) const { return vec2(x * num, y * num); }
+  inline vec2 operator/(float num) const { return vec2(x / num, y / num); }
+  inline vec2 operator-() const { return vec2(-x, -y); }
   inline friend std::ostream& operator<<(std::ostream& os, vec2 const& self) { return os << "vec3 " << self[0] << ' ' << self[1]; }
   
   inline static vec2 Lerp(const vec2 &a, const vec2 &b, float t) { return a * (1 - t) + (b * t); }
@@ -55,9 +59,7 @@ struct vec2
 };
 
 inline vec2 operator+(float num, const vec2 &vector) { return vector + num; }
-inline vec2 operator-(float num, const vec2 &vector) { return vector - num; }
 inline vec2 operator*(float num, const vec2 &vector) { return vector * num; }
-inline vec2 operator/(float num, const vec2 &vector) { return vector / num; }
 }
 
 #endif

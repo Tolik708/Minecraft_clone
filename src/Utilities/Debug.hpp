@@ -1,7 +1,18 @@
-#ifndef _LOGGER
-#define _LOGGER
+#ifndef DEBUG_HPP
+#define DEBUG_HPP
 
 #include "Header.hpp"
+
+#define SDL_CALL(debug, command) do { \
+    if(!(command)) \
+      debug->Error("Error: \"@3\" in @2, line: @1, file: @0", __FILE__, __LINE__, #command, SDL_GetError()); \
+  } while(0)
+  
+#define GL_CALL(debug, command) do { \
+    command; \
+    while(GLenum error = glGetError()) \
+      debug->Error("Error: @3 in @2, line: @1, file: @0", __FILE__, __LINE__, #command, Debug::GLErrorsNamesMap.at(error)); \
+  } while(0)
 
 namespace Tolik
 {
@@ -17,18 +28,16 @@ class Debug
 {
 public:
   using PaternType = std::vector<std::pair<std::string, std::function<void(void)>>>;
+  
+  static const std::unordered_map<GLenum, std::string> GLErrorsNamesMap;
 
   Debug();
 
-  template<typename... Args> inline void Log    (const std::string &format, Args&&... args) { m_sender = 1; m_logType = LogType::Debug;   LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
-  template<typename... Args> inline void Warning(const std::string &format, Args&&... args) { m_sender = 1; m_logType = LogType::Warning; LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
-  template<typename... Args> inline void Error  (const std::string &format, Args&&... args) { m_sender = 1; m_logType = LogType::Error;   LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
-  template<typename... Args> inline void Info   (const std::string &format, Args&&... args) { m_sender = 1; m_logType = LogType::Info;    LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
+  template<typename... Args> inline void Log    (const std::string &format, Args&&... args) { m_logType = LogType::Debug;   LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
+  template<typename... Args> inline void Warning(const std::string &format, Args&&... args) { m_logType = LogType::Warning; LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
+  template<typename... Args> inline void Error  (const std::string &format, Args&&... args) { m_logType = LogType::Error;   LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
+  template<typename... Args> inline void Info   (const std::string &format, Args&&... args) { m_logType = LogType::Info;    LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
 
-  template<typename... Args> inline void CoreInfo(const std::string &format, Args&&... args)    { m_sender = 1; m_logType = LogType::Info;    LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
-  template<typename... Args> inline void CoreWarning(const std::string &format, Args&&... args) { m_sender = 1; m_logType = LogType::Warning; LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
-  template<typename... Args> inline void CoreError(const std::string &format, Args&&... args)   { m_sender = 1; m_logType = LogType::Error;   LogInfo(m_patern); LogMessage(format, args...); LogInfo(m_postPatern); }
-  
   void SetPattern(const std::string &newPatern);
   void ResetPattern();
 private:
@@ -40,16 +49,11 @@ private:
   void inline Iterate(std::vector<std::string> &container) {}
  
   template<typename T, typename... Args> void Print(T &&t, Args&&... args);
-  template<typename... Args> void Print(uint8_t t, Args&&... args) { Print(static_cast<int>(t), args...); }
-  template<typename... Args> void Print(uint16_t t, Args&&... args) { Print(static_cast<int>(t), args...); }
-  template<typename... Args> void Print(uint32_t t, Args&&... args) { Print(static_cast<int>(t), args...); }
-  template<typename... Args> void Print(uint64_t t, Args&&... args) { Print(static_cast<int>(t), args...); }
   void Print() {}
 
 
   LogType m_currentLogType = LogType::Debug;
   LogType m_logType = LogType::Debug;
-  int m_sender = 0;
   HANDLE m_hConsole;
   std::ostringstream m_stream;
   PaternType m_patern;
@@ -57,9 +61,8 @@ private:
   const std::unordered_map<char, std::function<void(void)>> m_paternIdentifier;
 
   
-  static const std::unordered_map<LogType, std::string> LogTypeName;
-  static const std::unordered_map<LogType, uint32_t> LogTypeColor;
-  static const std::string numbers;
+  static const std::unordered_map<LogType, std::string> LogTypeNameMap;
+  static const std::unordered_map<LogType, uint32_t> LogTypeColorMap;
 };
 
 // template functions
@@ -96,7 +99,7 @@ template<typename... Args> void Debug::LogMessage(const std::string &format, Arg
   for (; position != std::string::npos; position++, position = format.find('@', position))
   {
     uint32_t numberLength = 0;
-    while (numbers.find(format[position + numberLength + 1]) != std::string::npos) numberLength++;
+    while (isdigit(format[position + numberLength + 1])) numberLength++;
     if (numberLength == 0)
       continue;
     

@@ -7,13 +7,13 @@
 
 namespace Tolik
 {
-class Debug;
+class BaseDeps;
 class Event;
 
 class LayerStack
 {
 public:
-  void Init(Debug *debug, std::queue<Event*> *eventQueue);
+  void Init(BaseDeps *baseDeps);
   void Update();
   void Quit();
   void OnEvent(Event* event);
